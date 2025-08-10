@@ -1,22 +1,15 @@
 package cn.sparrowmini.common.rest;
 
-import cn.sparrowmini.common.model.AppConfig;
 import cn.sparrowmini.common.model.AppConfigAttachment;
 import cn.sparrowmini.common.repository.AppConfigAttachmentRepository;
 import cn.sparrowmini.common.repository.AppConfigRepository;
-import cn.sparrowmini.common.service.CommonJpaService;
-import cn.sparrowmini.common.service.SimpleJpaFilter;
 import cn.sparrowmini.common.view.AppConfigInfo;
 import cn.sparrowmini.common.view.AppConfigView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -32,7 +25,7 @@ public class AppConfigController {
     @GetMapping("")
     @ResponseBody
     public Page<AppConfigView> getEntityList(Pageable pageable, String filter){
-        return appConfigRepository.findAll(pageable, filter, AppConfigView.class);
+        return appConfigRepository.findAllProjection(pageable, filter, AppConfigView.class);
     }
 
     @GetMapping("/{id}")

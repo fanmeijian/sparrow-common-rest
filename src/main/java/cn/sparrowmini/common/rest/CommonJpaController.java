@@ -19,74 +19,59 @@ import java.util.Map;
 import java.util.Set;
 
 @RestController
-@RequestMapping("common-jpa-controller")
+@RequestMapping("common-jpa")
 public class CommonJpaController {
 
     @Autowired
     private CommonJpaService commonJpaService;
 
-    @PostMapping("/{className}")
+    @PostMapping("")
     @ResponseBody
     @ResponseStatus(code = HttpStatus.CREATED)
-    public ApiResponse<?> saveEntity(@PathVariable String className, @RequestBody List<Object> body){
+    public ApiResponse<?> saveEntity(String className, @RequestBody List<Map<String, Object>> body) {
+        Class<?> domainClass = null;
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            Class<?> clazz = Class.forName(className);
+            domainClass = Class.forName(className);
             // 关键：构造一个 List<clazz> 的 JavaType
-            JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, clazz);
-            List<?> ids = commonJpaService.saveEntity(new ObjectMapper().convertValue(body, type));
-            return new ApiResponse<>(ids);
+//            JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, clazz);
+
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-
+        List<?> ids = commonJpaService.upsertEntity(domainClass, body);
+        return new ApiResponse<>(ids);
     }
 
-    @PatchMapping("/{className}")
+    @DeleteMapping("")
     @ResponseBody
-    @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void updateEntity(@PathVariable String className,@RequestBody List<Map<String, Object>> entities){
-        try {
-            Class<?> clazz = Class.forName(className);
-            commonJpaService.updateEntity(clazz,entities);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-
-    @DeleteMapping("/{className}")
-    @ResponseBody
-    @ResponseStatus(code = HttpStatus.NO_CONTENT)
     @Transactional
-    public void deleteEntity(@PathVariable String className,@RequestParam("id") Set<Object> ids){
+    public ApiResponse<Long> deleteEntity(String className, @RequestParam("id") Set<Object> ids) {
+        Class<?> domainClass = null;
         try {
-            Class<?> clazz = Class.forName(className);
-            commonJpaService.deleteEntity(clazz, ids);
+            domainClass = Class.forName(className);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
 
+        return new ApiResponse<>(commonJpaService.deleteEntity(domainClass, ids));
+
     }
 
-    @GetMapping( "/{className}/get-by-id")
+    @GetMapping("")
     @ResponseBody
-    public Object getEntity(@PathVariable String className,@RequestParam String id){
+    public Object getEntity(String className, @RequestParam("id") Object id) {
         try {
             Class<?> clazz = Class.forName(className);
-            Class<?> idClass = JpaUtils.getIdType(clazz);
-            Object id_ = new ObjectMapper().convertValue(id, idClass);
-            return commonJpaService.getEntity(clazz, id_);
+            return commonJpaService.getEntity(clazz, id);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
 
-    @GetMapping("/{className}")
+    @GetMapping("/filter")
     @ResponseBody
-    public Page<?> getEntityList(@PathVariable String className, Pageable pageable, String filter){
+    public Page<?> getEntityList(String className, Pageable pageable, String filter) {
         try {
             Class<?> clazz = Class.forName(className);
             return commonJpaService.getEntityList(clazz, pageable, filter);
