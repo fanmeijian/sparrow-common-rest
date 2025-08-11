@@ -28,10 +28,10 @@ public class CommonTreeController {
     @PatchMapping("/move")
     @ResponseBody
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void moveNode(Object currentId, Object nextId,String domainClassName){
+    public void moveNode(Object currentId, Object nextId,String className){
         Class<? extends BaseTree> domainClass = null;
         try {
-            domainClass = (Class<? extends BaseTree>) Class.forName(domainClassName);
+            domainClass = (Class<? extends BaseTree>) Class.forName(className);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -47,11 +47,10 @@ public class CommonTreeController {
      */
     @GetMapping("/children")
     @ResponseBody
-    @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public <T extends BaseTree> Page<T> getChildren(Object parentId, Pageable pageable,String domainClassName){
+    public <T extends BaseTree> Page<T> getChildren(String parentId, Pageable pageable,String className){
         Class<T> domainClass = null;
         try {
-            domainClass = (Class<T>) Class.forName(domainClassName);
+            domainClass = (Class<T>) Class.forName(className);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -65,10 +64,10 @@ public class CommonTreeController {
      */
     @GetMapping
     @ResponseBody
-    public <T extends BaseTree> T getNode(Object id,String domainClassName){
+    public <T extends BaseTree> T getNode(Object id,String className){
         Class<T> domainClass = null;
         try {
-            domainClass = (Class<T>) Class.forName(domainClassName);
+            domainClass = (Class<T>) Class.forName(className);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -84,10 +83,10 @@ public class CommonTreeController {
     @PostMapping()
     @ResponseBody
     @ResponseStatus(code = HttpStatus.CREATED)
-    public <T extends BaseTree, ID> ApiResponse<List<ID>> saveNode(List<Map<String, Object>> entitiesMap,String domainClassName){
+    public <T extends BaseTree, ID> ApiResponse<List<ID>> saveNode(List<Map<String, Object>> entitiesMap,String className){
         Class<T> domainClass = null;
         try {
-            domainClass = (Class<T>) Class.forName(domainClassName);
+            domainClass = (Class<T>) Class.forName(className);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -102,10 +101,10 @@ public class CommonTreeController {
     @DeleteMapping("")
     @ResponseBody
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public <T extends BaseTree, ID> void deleteNode(Set<ID> ids,String domainClassName){
+    public <T extends BaseTree, ID> void deleteNode(Set<ID> ids,String className){
         Class<T> domainClass = null;
         try {
-            domainClass = (Class<T>) Class.forName(domainClassName);
+            domainClass = (Class<T>) Class.forName(className);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
