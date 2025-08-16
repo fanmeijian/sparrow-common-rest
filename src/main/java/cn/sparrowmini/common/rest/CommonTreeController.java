@@ -28,7 +28,7 @@ public class CommonTreeController {
     @PatchMapping("/move")
     @ResponseBody
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void moveNode(Object currentId, Object nextId,String className){
+    public void moveNode(@RequestParam Object currentId,@RequestParam Object nextId,String className){
         Class<? extends BaseTree> domainClass = null;
         try {
             domainClass = (Class<? extends BaseTree>) Class.forName(className);
@@ -64,7 +64,7 @@ public class CommonTreeController {
      */
     @GetMapping
     @ResponseBody
-    public <T extends BaseTree> T getNode(Object id,String className){
+    public <T extends BaseTree> T getNode(@RequestParam Object id,String className){
         Class<T> domainClass = null;
         try {
             domainClass = (Class<T>) Class.forName(className);
@@ -83,7 +83,7 @@ public class CommonTreeController {
     @PostMapping()
     @ResponseBody
     @ResponseStatus(code = HttpStatus.CREATED)
-    public <T extends BaseTree, ID> ApiResponse<List<ID>> saveNode(List<Map<String, Object>> entitiesMap,String className){
+    public <T extends BaseTree, ID> ApiResponse<List<ID>> saveNode(@RequestBody List<Map<String, Object>> entitiesMap,String className){
         Class<T> domainClass = null;
         try {
             domainClass = (Class<T>) Class.forName(className);
@@ -101,7 +101,7 @@ public class CommonTreeController {
     @DeleteMapping("")
     @ResponseBody
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public <T extends BaseTree, ID> void deleteNode(Set<ID> ids,String className){
+    public <T extends BaseTree, ID> void deleteNode(@RequestParam("id") Set<ID> ids,String className){
         Class<T> domainClass = null;
         try {
             domainClass = (Class<T>) Class.forName(className);
