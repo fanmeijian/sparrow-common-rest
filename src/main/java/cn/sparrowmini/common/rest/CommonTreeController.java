@@ -1,5 +1,6 @@
 package cn.sparrowmini.common.rest;
 
+import cn.sparrowmini.common.dto.BaseTreeDto;
 import cn.sparrowmini.common.model.ApiResponse;
 import cn.sparrowmini.common.model.BaseTree;
 import cn.sparrowmini.common.service.CommonTreeService;
@@ -47,14 +48,20 @@ public class CommonTreeController {
      */
     @GetMapping("/children")
     @ResponseBody
-    public <T extends BaseTree> Page<T> getChildren(String parentId, Pageable pageable,String className){
+    public <T extends BaseTree, P extends BaseTreeDto> Page<?> getChildren(String parentId, Pageable pageable, String className, String projectionClassName){
         Class<T> domainClass = null;
+        Class<P> projectionClass = null;
         try {
             domainClass = (Class<T>) Class.forName(className);
+            if(projectionClassName!=null){
+                projectionClass = (Class<P>) Class.forName(projectionClassName);
+            }
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        return commonTreeService.getChildren(parentId,pageable,domainClass);
+        return projectionClass==null
+                ? commonTreeService.getChildren(parentId,pageable,domainClass)
+                : commonTreeService.getChildrenProjection(parentId,pageable,domainClass, projectionClass);
     }
 
     /**
